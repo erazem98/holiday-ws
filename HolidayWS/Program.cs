@@ -1,6 +1,4 @@
 using HolidayWS.Repositories;
-using System.Configuration;
-using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 var builder = WebApplication.CreateBuilder(args);
 

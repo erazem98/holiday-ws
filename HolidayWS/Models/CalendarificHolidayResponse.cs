@@ -2,7 +2,6 @@
 
 namespace HolidayWS.Models
 {
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class Country
     {
         public string id { get; set; }

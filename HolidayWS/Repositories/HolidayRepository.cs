@@ -27,7 +27,14 @@ namespace HolidayWS.Repositories
 
             if (response?.IsSuccessStatusCode ?? false)
             {
-                holidays = await response.Content.ReadFromJsonAsync<CalendarificHolidayResponse>();
+                try
+                {
+                    holidays = await response.Content.ReadFromJsonAsync<CalendarificHolidayResponse>();
+                }
+                catch
+                {
+                    holidays = new CalendarificHolidayResponse() { meta = new Meta {error_type = "An error occured while processing request. Check parameters again. Keep in mind that years supported are from 1919 to 2400." } };
+                }
             }
 
             return holidays;

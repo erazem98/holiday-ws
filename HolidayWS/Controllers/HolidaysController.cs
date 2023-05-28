@@ -26,32 +26,32 @@ namespace HolidayWS.Controllers
 
         #region API GET
         [HttpGet("holidays/{year}")]
-        public string GetHolidaysForYear(int? year)
+        public ActionResult<string> GetHolidaysForYear(int? year)
         {
             try
             {
                 var result = _holidayService.GetHolidaysForPeriod(new DateTime(year ?? Constants.DEFAULT_YEAR, 1, 1), PeriodType.Year);
-                if (result != null && result.Any()) return JsonConvert.SerializeObject(result);
-                return JsonConvert.SerializeObject(new ErrorResponse { ErrorCode = (int)HttpStatusCode.NotFound, ErrorMessage = Constants.NO_HOLIDAYS });
+                if (result != null && result.Any()) return Ok(JsonConvert.SerializeObject(result));
+                return NotFound(JsonConvert.SerializeObject(new ErrorResponse { ErrorCode = (int)HttpStatusCode.NotFound, ErrorMessage = Constants.NO_HOLIDAYS }));
             }
             catch (Exception e)
             {
-                return GenerateExceptionResponse(e);
+                return  Conflict(GenerateExceptionResponse(e));
             }
         }
 
         [HttpGet("holidays/today")]
-        public string GetIsTodayHoliday()
+        public ActionResult<string> GetIsTodayHoliday()
         {
             try
             {
                 var holidaysToday = _holidayService.GetHolidaysForPeriod(DateTime.Now.Date, PeriodType.Day);
                 GetIsTodayHolidayResonse response = new GetIsTodayHolidayResonse(holidaysToday);
-                return JsonConvert.SerializeObject(response);
+                return Ok(JsonConvert.SerializeObject(response));
             }
             catch (Exception e)
             {
-                return GenerateExceptionResponse(e);
+                return Conflict(GenerateExceptionResponse(e));
             }
         }
         #endregion
