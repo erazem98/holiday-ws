@@ -11,6 +11,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["HolidayWS/HolidayWS.csproj", "HolidayWS/"]
+#RUN  ping 142.251.36.142
 RUN dotnet restore "HolidayWS/HolidayWS.csproj"
 COPY . .
 WORKDIR "/src/HolidayWS"
