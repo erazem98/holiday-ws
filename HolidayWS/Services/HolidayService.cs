@@ -6,13 +6,23 @@ namespace HolidayWS.Services
 {
     public class HolidayService
     {
-        private HolidayRepository _repository = new HolidayRepository("d9ee19d73a1e77044f3c22a94597e52f1ddd06f8");
-
         private List<Holiday> _holidays = new List<Holiday>();
+        private IHolidayRepository _repository;
+
+        public HolidayService(IHolidayRepository repository)
+        {
+            _repository = repository;
+        }
 
         private void PopulateHolidays(string? country = null, int? year = null)
         {
-            var holidaysResponse = _repository.GetHolidays(country, year)?.GetAwaiter().GetResult();
+            if (country == null) country = Constants.DEFAULT_COUNTRY;
+            if (year == null) year = Constants.DEFAULT_YEAR;
+
+            //already have data for this year and this country, no need to retrieve it again
+            if (_holidays.Any(x => x.Date.Year == (year ?? Constants.DEFAULT_YEAR))) return;
+
+            var holidaysResponse = _repository.GetHolidays(country, (int)year)?.GetAwaiter().GetResult();
 
             //no result or error occured
             if (holidaysResponse?.response?.holidays  == null || !string.IsNullOrEmpty(holidaysResponse.meta.error_type))

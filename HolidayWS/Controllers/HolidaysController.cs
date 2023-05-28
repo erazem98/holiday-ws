@@ -1,4 +1,5 @@
 ﻿using HolidayWS.Models;
+using HolidayWS.Repositories;
 using HolidayWS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -10,7 +11,6 @@ using System.Text.Json.Serialization;
 
 namespace HolidayWS.Controllers
 {
-
     [ApiController]
     [Route("[controller]")]
     public class HolidayController : ControllerBase
@@ -18,17 +18,13 @@ namespace HolidayWS.Controllers
         private readonly ILogger<HolidayController> _logger;
         private HolidayService _holidayService; 
 
-        public HolidayController(ILogger<HolidayController> logger)
+        public HolidayController(ILogger<HolidayController> logger, IHolidayRepository holidayRepository)
         {
             _logger = logger;
-            _holidayService = new HolidayService(); 
+            _holidayService = new HolidayService(holidayRepository); 
         }
 
-        /// <summary>
-        /// Test
-        /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
+        #region API GET
         [HttpGet("holidays/{year}")]
         public string GetHolidaysForYear(int? year)
         {
@@ -40,7 +36,7 @@ namespace HolidayWS.Controllers
             }
             catch (Exception e)
             {
-                return JsonConvert.SerializeObject(new ErrorResponse { ErrorCode = (int)HttpStatusCode.Conflict, ErrorMessage = e?.Message ?? Constants.ERROR });
+                return GenerateExceptionResponse(e);
             }
         }
 
@@ -55,8 +51,16 @@ namespace HolidayWS.Controllers
             }
             catch (Exception e)
             {
-                return JsonConvert.SerializeObject(new ErrorResponse { ErrorCode = (int)HttpStatusCode.Conflict, ErrorMessage = e?.Message ?? Constants.ERROR });
+                return GenerateExceptionResponse(e);
             }
         }
+        #endregion
+
+        #region Helpers
+        private string GenerateExceptionResponse(Exception e)
+        {
+            return JsonConvert.SerializeObject(new ErrorResponse { ErrorCode = (int)HttpStatusCode.Conflict, ErrorMessage = e?.Message ?? Constants.ERROR });
+        }
+        #endregion
     }
 }
