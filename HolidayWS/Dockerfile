@@ -4,6 +4,7 @@
 #For more information, please see https://aka.ms/containercompat
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -11,7 +12,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["HolidayWS/HolidayWS.csproj", "HolidayWS/"]
-#RUN  ping 142.251.36.142
 RUN dotnet restore "HolidayWS/HolidayWS.csproj"
 COPY . .
 WORKDIR "/src/HolidayWS"
@@ -23,4 +23,4 @@ RUN dotnet publish "HolidayWS.csproj" -c Release -o /app/publish /p:UseAppHost=f
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "HolidayWS.dll"]
+ENTRYPOINT ["dotnet", "HolidayWS.dll", "environment=Development"]
