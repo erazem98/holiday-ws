@@ -11,8 +11,8 @@ using System.Text.Json.Serialization;
 
 namespace HolidayWS.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
+    //[ApiController]
+    //[Route("[controller]")]
     public class HolidayController : ControllerBase
     {
         private readonly ILogger<HolidayController> _logger;
@@ -24,8 +24,19 @@ namespace HolidayWS.Controllers
             _holidayService = new HolidayService(holidayRepository); 
         }
 
-        #region API GET
+        #region HTTP GET
+        /// <summary>
+        /// Retrieves all holidays with their names and dates for a given year.
+        /// </summary>
+        /// <param name="year">The year for which to retrieve the holidays (e.g., 2023).</param>
+        /// <returns>
+        /// List of holidays in JSON format. 
+        /// Example: [{ "Date":"2023-01-01","Name":"New Year's Day"}, ...]
+        /// </returns>
         [HttpGet("holidays/{year}")]
+        [ProducesResponseType(type: typeof(List<Holiday>), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(type: typeof(ErrorResponse), statusCode: StatusCodes.Status404NotFound)]
+        [ProducesResponseType(type: typeof(ErrorResponse), statusCode: StatusCodes.Status409Conflict)]
         public ActionResult<string> GetHolidaysForYear(int? year)
         {
             try
@@ -40,7 +51,16 @@ namespace HolidayWS.Controllers
             }
         }
 
+        /// <summary>
+        /// Checks if the current date is a holiday and returns a boolean response.
+        /// </summary>
+        /// <returns>
+        /// Answer of whether today is a holiday or not in JSON format.
+        /// Example: { "IsHoliday": false }
+        /// </returns>
         [HttpGet("holidays/today")]
+        [ProducesResponseType(type: typeof(GetIsTodayHolidayResonse), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(type: typeof(ErrorResponse), statusCode: StatusCodes.Status409Conflict)]
         public ActionResult<string> GetIsTodayHoliday()
         {
             try

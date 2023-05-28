@@ -17,6 +17,7 @@ namespace HolidayWS.Services
         /// <summary>
         /// Populates variable _holidays and returns whether ppulation of the variable went as expected
         /// </summary>
+        /// <param name="errorMessage"></param>
         /// <param name="country"></param>
         /// <param name="year"></param>
         /// <returns></returns>
@@ -48,10 +49,16 @@ namespace HolidayWS.Services
             return true;
         }
 
+        /// <summary>
+        /// Retrieves holidays for a period, specified in parameter periodType.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="periodType"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public List<Holiday>? GetHolidaysForPeriod(DateTime date, PeriodType periodType) 
         {
             string errorMessage;  
-
             //populate variable _holidays. if error occured, do not continue
             if (!PopulateHolidays(out errorMessage, year: date.Year))
             {
